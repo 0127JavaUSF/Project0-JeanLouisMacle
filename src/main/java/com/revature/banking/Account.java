@@ -7,15 +7,19 @@ public class Account implements AccountService{
 	
 	List accountOwners = new ArrayList();
 
-	public void depositToAccount() {
+	public int depositToAccount() {
 		// TODO Auto-generated method stub
-		
-		
+		return 0;
 	}
 
-	public void withdrawFromAccount() {
+	public int withdrawFromAccount() {
 		// TODO Auto-generated method stub
-		
+		return 0;
+	}
+
+	public int transferToAccount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	
