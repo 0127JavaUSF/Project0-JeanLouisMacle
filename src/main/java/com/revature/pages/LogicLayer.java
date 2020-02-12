@@ -28,6 +28,14 @@ public class LogicLayer {
 		NavigationMenu navigationObject = pageDisplayed.getContent().getNavigationObject();
 		ArrayList<Page> listOfPageObjects = navigationObject.getNavigationMenuPages();
 		
+		//Special case
+		if(pageDisplayed.getClass() == AddWithdrawMoneyPage.class) {//treated as a string ould be treated (username, password)
+			pageDisplayed.getContent().getUnknowEntryMessage().setUserData(null);
+			pageToReturn = this.nextPageToReturnAfterStringEntry(pageDisplayed, userData);
+			this.setPageData(pageToReturn);
+			return pageToReturn;
+			}
+		
 		/* Parsing to distinguish int from non int */			
 		int parsedEntryInt = -1;
 		try {
@@ -43,12 +51,8 @@ public class LogicLayer {
 				pageDisplayed.getContent().getUnknowEntryMessage().setUserData(null);
 				//The user data is inside the range of expected answer
 				ArrayList<Page> pagesInNavigationMenu = pageDisplayed.getContent().getNavigationObject().getNavigationMenuPages();
-				if(pageDisplayed.getClass() != AddWithdrawMoneyPage.class) {pageToReturn = pagesInNavigationMenu.get(parsedEntryInt-1);}
-				else {//treated as a string ould be treated (username, password)
-					pageDisplayed.getContent().getUnknowEntryMessage().setUserData(null);
-					pageToReturn = this.nextPageToReturnAfterStringEntry(pageDisplayed, userData);
-					this.setPageData(pageToReturn);
-					return pageToReturn;}
+				pageToReturn = pagesInNavigationMenu.get(parsedEntryInt-1);
+				
 				
 			}
 			else {
@@ -190,26 +194,27 @@ public class LogicLayer {
 				
 				
 			}
-			if (pageDisplayed.getClass() == AddWithdrawMoneyPage.class)
+			
+				
+				
+			}
+		else if (pageDisplayed.getClass() == AddWithdrawMoneyPage.class)
+		{
+			if (userData.equals("*")) {return AccountsHomePage.returnSingleton();}
+			else if (NumberUtils.isCreatable(userData))//TODO parse for numeric value
 			{
-				if (userData.equals("*")) {return AccountsHomePage.returnSingleton();}
-				else if (NumberUtils.isCreatable(userData))//TODO parse for numeric value
-				{
-					Float userDataToNumeric = new Float(userData);
-					Account currentAccount = Page.getCurrentAccount(Page.lastIntEntry);
-					Float previousBalance = currentAccount.getBalance();
-					Float newBalance = previousBalance + userDataToNumeric;
-					currentAccount.setBalance(newBalance);
-					
-					return AccountPage.returnSingleton();
-				}
-				else //unknown entry
-				{
-					pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
-					return pageDisplayed;
-				}
+				Float userDataToNumeric = new Float(userData);
+				Account currentAccount = Page.getCurrentAccount(Page.lastIntEntry);
+				Float previousBalance = currentAccount.getBalance();
+				Float newBalance = previousBalance + userDataToNumeric;
+				currentAccount.setBalance(newBalance);
 				
-				
+				return AccountPage.returnSingleton();
+			}
+			else //unknown entry
+			{
+				pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
+				return pageDisplayed;
 			}
 		
 		}
