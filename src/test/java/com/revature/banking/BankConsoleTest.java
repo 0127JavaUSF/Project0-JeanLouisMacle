@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.revature.pages.LogicLayer;
 import com.revature.userInterface.BankConsole;
 
 /**
