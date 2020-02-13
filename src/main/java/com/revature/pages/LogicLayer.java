@@ -2,10 +2,12 @@ package com.revature.pages;
 
 import java.util.ArrayList;
 
+
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.revature.db.Account;
 import com.revature.db.AccountDAO;
+import com.revature.db.CredentialsDAO;
 import com.revature.db.UserProfile;
 import com.revature.db.UserProfileDAO;
 
@@ -79,32 +81,36 @@ public class LogicLayer {
 				pageToReturn = this.nextPageToReturnAfterStringEntry(pageDisplayed, userData);
 				this.setPageData(pageToReturn);
 				return pageToReturn;
-			}
-			
-			
-			
+			}			
+		}		
+	}
+	
+	//if the username exists, the password is also retrieved
+	public static boolean isUserNameValid(String userData) {
+		CredentialsDAO dao = new CredentialsDAO();
+		dao.retrieveCredentials(userData);
+		if (Page.username != null) {
+			System.out.println("Page.username: "+Page.username);
+			System.out.println("Page.password: "+Page.password);
+			return true;
 		}
 			
-	
+		else return false;
 		
 	}
 	
-	private static boolean isUserNameValid(String userData) {
-		//TODO call to DB
-		return true;
-	}
-	
-	private static boolean isPasswordValid(String userData) {
-		//TODO call to DB
+	public static boolean isPasswordValid(String userData) {
+		System.out.println("Checking the validity of the password.");
+		System.out.println("Page.username: "+Page.username);
+		System.out.println("Page.password: "+Page.password);
+		System.out.println("userData: "+userData);
 		
-		
-		//Password is valid
-		//TODO retrieve the id from the db
-		int clientId = 1; 
-		LogicLayer.retrieveClientInfo(clientId);		
-		
-		//TODO finish the isPasswordValid
-		return true;
+		UserProfileDAO dao = new UserProfileDAO();
+		int clientIdFromDB = dao.getClientIdFromPasswordAndHash(userData,Page.password);
+		System.out.println("clientIdFromDB: "+clientIdFromDB);
+		System.out.println("Page.clientId: "+Page.clientId);
+		if (clientIdFromDB==Page.clientId) return true;
+		else return false;
 	}
 	
 	public static void retrieveClientInfo(int clientId) {
@@ -112,8 +118,7 @@ public class LogicLayer {
 		//Retrieving the profile from the database
 		UserProfileDAO profileDao = new UserProfileDAO();	
 		//TODO retrieve id from username/password data
-		UserProfile userProfile = profileDao.getProfile(clientId);
-		Page.setUserProfile(userProfile);
+		profileDao.getProfile(clientId);		
 		//Retrieving the account information 
 		AccountDAO dao = new AccountDAO();
 		dao.retrieveAccountLists(clientId);
@@ -122,7 +127,7 @@ public class LogicLayer {
 	}
 	
 	
-	private static boolean isPasswordStrentgthAcceptable(String userData) {
+	private static boolean isPasswordStrengthAcceptable(String userData) {
 		//TODO
 		return true;
 	}
@@ -138,23 +143,26 @@ public class LogicLayer {
 				//a valid/invalid user name or a valid/invalid password has been entered
 				if(isUserNameValid(userData)) 
 				{//return Login Page with content message asking for password
-					System.out.println("User name verification bypassed. Login page to ask for password.");
+					System.out.println("User name is valid");
+					//Storing user name in DB
+//					UserProfileDAO dao = new UserProfileDAO();
+//					dao.setUserName(userData);
 					pageDisplayed.getContent().getContentMessage().setContentMessageText(StringExternalizationUtility.getString("LoginPage.message.enterPassword"));
-					((LoginPage)pageDisplayed).setIsUserNameEntryPage(false);
-					System.out.println("Value of new content message text is: "+pageDisplayed.getContent().getContentMessage().getContentMessageText());
+					((LoginPage)pageDisplayed).setIsUserNameEntryPage(false);					
 					return pageDisplayed;
 				}
 				else
 				{//return Login Page with error message
+					System.out.println("User name is not valid: "+userData);
 					pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
 					return pageDisplayed;
 				}
 			}
 			else
-			{
+			{	//checking the combination username/password
 				if(isPasswordValid(userData))
 				{
-					//Return Accounts home page
+					//Return Accounts home page					
 					return AccountsHomePage.returnSingleton();
 				}
 				else 
@@ -167,41 +175,34 @@ public class LogicLayer {
 		else if (pageDisplayed.getClass() == RegistrationPage.class)
 		{
 			if(((RegistrationPage)pageDisplayed).isUserNameEntryPage()){
-				if(isPasswordStrentgthAcceptable(userData)) {
-					//TODO: store user name in DB
-					
+					Page.temporaryUserName = userData;
 					//Return Registration Page asking for password
-					System.out.println("Setting registration message asking for a password.");
 					((RegistrationPage)pageDisplayed).setIsUserNameEntryPage(false);
 					pageDisplayed.getContent().getContentMessage().setContentMessageText(StringExternalizationUtility.getString("RegistrationPage.message.password"));
-					return pageDisplayed;
+					return pageDisplayed;				
+			}
+			else
+			{
+				if(isPasswordStrengthAcceptable(userData)) {
+					UserProfileDAO dao = new UserProfileDAO();
+					dao.setUserName(Page.temporaryUserName);
+					dao.setPassword(Page.clientId,userData);						
 				}
 				else
 				{
 					//TODO Return the same page with a message asking for a stronger password.
 					
 				}
-				
-				
-				
-			}
-			else
-			{
-				//TODO: store password hash in DB
-				
 				//Registration is done. Logging page to be displayed.
 				return LoginPage.returnSingleton();
 				
+			}		
 				
-			}
-			
-				
-				
-			}
+		}
 		else if (pageDisplayed.getClass() == AddWithdrawMoneyPage.class)
 		{
 			if (userData.equals("*")) {return AccountsHomePage.returnSingleton();}
-			else if (NumberUtils.isCreatable(userData))//TODO parse for numeric value
+			else if (NumberUtils.isCreatable(userData))
 			{
 				Float userDataToNumeric = new Float(userData);
 				Account currentAccount = Page.getCurrentAccount(Page.lastIntEntry);

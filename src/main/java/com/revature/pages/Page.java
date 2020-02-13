@@ -1,6 +1,7 @@
 package com.revature.pages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.revature.db.Account;
 import com.revature.db.UserProfile;
@@ -23,6 +24,10 @@ public class Page {
 	private static ArrayList<Account> savingAccountList = null;
 	static int lastIntEntry;
 	
+	public static String username;
+	public static String temporaryUserName;
+	public static String password;
+	public static int clientId;
 	
 	public static UserProfile getUserProfile() {
 		return userProfile;

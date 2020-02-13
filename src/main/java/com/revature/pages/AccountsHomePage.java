@@ -34,44 +34,55 @@ public class AccountsHomePage extends LoggedIn {
 	
 	
 	public void setPageToString() {
-		//Personalized header
-		this.setPersonalizedHeader();
+		if(Page.getUserProfile()!= null) {
 		
-		//Set the Content
-			//Dynamic navigation menu	+ updating the data in the Navigation object
-		ArrayList<Page> listOfPageObjects = this.getContent().getNavigationObject().getNavigationMenuPages();
-		
-		String navigationString = "Options\n"; //$NON-NLS-1$
-		navigationString += "\tCHECKING ACCOUNTS\n"; //$NON-NLS-1$
-		int index = 0;
-		ArrayList<String> headerItems = new ArrayList();
-		headerItems.add("Account number"); //$NON-NLS-1$
-		headerItems.add("Account balance"); //$NON-NLS-1$
-		//navigationString += "Account number"+"\t\t"+"Account balance"+"\n";
-		navigationString += tabFormating(headerItems);
-		for (Account cAccount:Page.getCheckingAccountList())
-		{
-			index++;
-			listOfPageObjects.add(AccountPage.returnSingleton());
-			navigationString += index+"\t"+cAccount.getAccountNumber()+"\t\t\t"+cAccount.getBalance()+"\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			//Personalized header
+			this.setPersonalizedHeader();
+			
+			//Set the Content
+				//Dynamic navigation menu	+ updating the data in the Navigation object
+			ArrayList<Page> listOfPageObjects = this.getContent().getNavigationObject().getNavigationMenuPages();
+			
+			String navigationString = "Options\n"; //$NON-NLS-1$
+			navigationString += "\tCHECKING ACCOUNTS\n"; //$NON-NLS-1$
+			int index = 0;
+			ArrayList<String> headerItems = new ArrayList();
+			headerItems.add("Account number"); //$NON-NLS-1$
+			headerItems.add("Account balance"); //$NON-NLS-1$
+			//navigationString += "Account number"+"\t\t"+"Account balance"+"\n";
+			navigationString += tabFormating(headerItems);
+			for (Account cAccount:Page.getCheckingAccountList())
+			{
+				index++;
+				listOfPageObjects.add(AccountPage.returnSingleton());
+				navigationString += index+"\t"+cAccount.getAccountNumber()+"\t\t\t"+cAccount.getBalance()+"\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			navigationString += "\n"; //$NON-NLS-1$
+			navigationString += "\tSAVINGS ACCOUNTS"; //$NON-NLS-1$
+			navigationString += "\n"; //$NON-NLS-1$
+			headerItems.clear();
+			headerItems.add("Account number"); //$NON-NLS-1$
+			headerItems.add("Account balance");					 //$NON-NLS-1$
+			for (Account cAccount:Page.getSavingAccountList())
+			{
+				index++;
+				listOfPageObjects.add(AccountPage.returnSingleton());
+				navigationString += index+"\t"+cAccount.getAccountNumber()+"\t\t\t"+cAccount.getBalance()+"\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			navigationString += "\t"+StringExternalizationUtility.getString("AccountsHomePage.Add_Withdraw_Transfer")+Page.pressReturnKeyText+"\n"; //$NON-NLS-1$ //$NON-NLS-2$
+			navigationString += "\t"+StringExternalizationUtility.getString("AccountsHomePage.Add_Close_Account")+Page.pressReturnKeyText+"\n"; //$NON-NLS-1$ //$NON-NLS-2$
+			
+			this.getContent().getNavigationObject().setToString(navigationString);
+		//Footer: No need to set the footer; default value
 		}
-		navigationString += "\n"; //$NON-NLS-1$
-		navigationString += "\tSAVINGS ACCOUNTS"; //$NON-NLS-1$
-		navigationString += "\n"; //$NON-NLS-1$
-		headerItems.clear();
-		headerItems.add("Account number"); //$NON-NLS-1$
-		headerItems.add("Account balance");					 //$NON-NLS-1$
-		for (Account cAccount:Page.getSavingAccountList())
-		{
-			index++;
-			listOfPageObjects.add(AccountPage.returnSingleton());
-			navigationString += index+"\t"+cAccount.getAccountNumber()+"\t\t\t"+cAccount.getBalance()+"\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		else {
+			//Personalized header
+			this.setPersonalizedHeader();
+			String navigationString = "Create account";
+			this.getContent().getNavigationObject().setToString(navigationString);
+			//Footer: No need to set the footer; default value
+			
 		}
-		navigationString += "\t"+StringExternalizationUtility.getString("AccountsHomePage.Add_Withdraw_Transfer")+Page.pressReturnKeyText+"\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		navigationString += "\t"+StringExternalizationUtility.getString("AccountsHomePage.Add_Close_Account")+Page.pressReturnKeyText+"\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		this.getContent().getNavigationObject().setToString(navigationString);
-	//Footer: No need to set the footer; default value
 		
 		
 	

@@ -14,6 +14,7 @@ import com.revature.db.Account;
 import com.revature.db.UserProfile;
 
 public class LogicLayerTest {
+	LogicLayer logicLayer;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -25,6 +26,7 @@ public class LogicLayerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		logicLayer = new LogicLayer();
 	}
 
 	@After
@@ -44,11 +46,16 @@ public class LogicLayerTest {
 		boolean isProfileNotNull = (profile !=null);
 		boolean isCheckingAccountListNotNull = (checkingAccountList != null);
 		boolean isSavingsAccountListNotNull = (savingsAccountList != null);
-		System.out.println("isProfileNotNull   :"+isProfileNotNull);
-		System.out.println(" isCheckingAccountListNotNull  :"+isCheckingAccountListNotNull);
-		System.out.println(" isSavingsAccountListNotNull  :"+isSavingsAccountListNotNull);
-		
 		assertTrue(isProfileNotNull & isCheckingAccountListNotNull & isSavingsAccountListNotNull);
 	};
 
+	@Test
+	public void isUserNameValidTest()
+	{
+		assertTrue(LogicLayer.isUserNameValid("JohnAppleseed"));		
+	}
+	
+	
+	
+	
 }
