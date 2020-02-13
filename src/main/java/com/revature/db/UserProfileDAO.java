@@ -9,10 +9,9 @@ import com.revature.pages.Page;
 
 public class UserProfileDAO {
 	
-	public int getProfile(int id) {
+	public void getProfile(int id) {
 		Connection connection = ConnectionUtil.getConnection();
 		String sql = "SELECT clientId, firstName, lastName,email, username FROM Client WHERE clientId=?";
-		int profileIsNotNull = 0;
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1,id);
@@ -23,15 +22,12 @@ public class UserProfileDAO {
 				String lastName = result.getString("lastName");
 				String email = result.getString("email");
 				String username = result.getString("username");				
-				Page.setUserProfile(new UserProfile(clientId,firstName,lastName,email,username));	
-				profileIsNotNull = 1;
+				Page.setUserProfile(new UserProfile(clientId,firstName,lastName,email,username));		
 			}
 		} 
 		catch (SQLException e) {		
 			e.printStackTrace();
 		}			
-		if (!profileIsNotNull) System.err.println("The program failed to save the user profile");
-		return profileIsNotNull;
 	}
 	//Stores username and client id
 	public int setUserName(String userName) {
@@ -46,7 +42,7 @@ public class UserProfileDAO {
 			while (result.next()) {
 				clientId = result.getInt("clientId");
 				Page.clientId = clientId;
-				System.out.println("Client id: "+clientId);
+				//System.out.println("Client id: "+clientId);
 			}
 			
 		}

@@ -30,12 +30,12 @@ public class UserProfileDAOTest {
 	public void tearDown() throws Exception {
 	}
 
-//	@Test
-//	public void getProfileTest() {
-//		dao.getProfile(1);
-//		assertTrue(Page.getUserProfile() != null);		
-//	}
-//	
+	@Test
+	public void getProfileTest() {
+		dao.getProfile(1);
+		assertTrue(Page.getUserProfile() != null);		
+	}
+	
 //	@Test
 //	public void setUserName() {			
 //		assertTrue(dao.setUserName("testDao3") ==1);//returns the row count

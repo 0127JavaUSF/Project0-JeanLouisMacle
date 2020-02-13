@@ -19,10 +19,10 @@ public class LogicLayer {
 	/* if userEntry is a valid number option, the Page to display is retrieved from the navigationMenu object */	
 	public Page answerUserRequest(Page pageDisplayed, String userData)
 	{
-		System.out.println("Page title: "+pageDisplayed.getTitle());
-		System.out.println("User data: "+userData);
-		if (pageDisplayed.expectsIntOnlyAsEntry()) {System.out.println("Only ints are expected in value");}
-			else {System.out.println("Strings non parsable as int are expected as value");}
+		////System.out.println("Page title: "+pageDisplayed.getTitle());
+		//System.out.println("User data: "+userData);
+		//if (pageDisplayed.expectsIntOnlyAsEntry()) {//System.out.println("Only ints are expected in value");}
+		//	else {//System.out.println("Strings non parsable as int are expected as value");}
 		
 		Page pageToReturn = null;
 		//The data entered is tested to see if the options are outside what would be expected
@@ -43,12 +43,12 @@ public class LogicLayer {
 		try {
 			parsedEntryInt = Integer.parseInt(userData);
 			//test if we are in the range of the expected menu options
-			System.out.println("listOfPageObjects.size():"+listOfPageObjects.size());
+			//System.out.println("listOfPageObjects.size():"+listOfPageObjects.size());
 			int maxIntValueExpected = listOfPageObjects.size();
 			if (1<= parsedEntryInt && parsedEntryInt <= maxIntValueExpected) {
-				System.out.println("User data is inside the range of expected answer.Parsed value:"+parsedEntryInt+". Number of options:"+listOfPageObjects.size());
+				//System.out.println("User data is inside the range of expected answer.Parsed value:"+parsedEntryInt+". Number of options:"+listOfPageObjects.size());
 				Page.lastIntEntry = parsedEntryInt;
-				System.out.println("Page displayed:"+pageDisplayed.getClass());
+				//System.out.println("Page displayed:"+pageDisplayed.getClass());
 				//Resetting UnknowEntryMessage
 				pageDisplayed.getContent().getUnknowEntryMessage().setUserData(null);
 				//The user data is inside the range of expected answer
@@ -59,18 +59,18 @@ public class LogicLayer {
 			}
 			else {
 				//or the user data is outside the range of expected answer
-				System.out.println("User data is outside the range of expected answer.");
+				//System.out.println("User data is outside the range of expected answer.");
 				pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
 				pageToReturn = pageDisplayed;						
 			}
-			System.out.println("Page to return: "+pageToReturn.getClass());
+			//System.out.println("Page to return: "+pageToReturn.getClass());
 			this.setPageData(pageToReturn);
 			return pageToReturn;
 		}
 		catch(NumberFormatException e) {
 			//The entry was not an int; Were all entries expected to be ints
 			if (pageDisplayed.expectsIntOnlyAsEntry()) {
-				System.out.println("The program tried to parse what is not an int.");
+				//System.out.println("The program tried to parse what is not an int.");
 				pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
 				pageToReturn = pageDisplayed;	
 				this.setPageData(pageToReturn);
@@ -90,8 +90,8 @@ public class LogicLayer {
 		CredentialsDAO dao = new CredentialsDAO();
 		dao.retrieveCredentials(userData);
 		if (Page.username != null) {
-			System.out.println("Page.username: "+Page.username);
-			System.out.println("Page.password: "+Page.password);
+			//System.out.println("Page.username: "+Page.username);
+			//System.out.println("Page.password: "+Page.password);
 			return true;
 		}
 			
@@ -100,15 +100,15 @@ public class LogicLayer {
 	}
 	
 	public static boolean isPasswordValid(String userData) {
-		System.out.println("Checking the validity of the password.");
-		System.out.println("Page.username: "+Page.username);
-		System.out.println("Page.password: "+Page.password);
-		System.out.println("userData: "+userData);
+		//System.out.println("Checking the validity of the password.");
+		//System.out.println("Page.username: "+Page.username);
+		//System.out.println("Page.password: "+Page.password);
+		//System.out.println("userData: "+userData);
 		
 		UserProfileDAO dao = new UserProfileDAO();
 		int clientIdFromDB = dao.getClientIdFromPasswordAndHash(userData,Page.password);
-		System.out.println("clientIdFromDB: "+clientIdFromDB);
-		System.out.println("Page.clientId: "+Page.clientId);
+		//System.out.println("clientIdFromDB: "+clientIdFromDB);
+		//System.out.println("Page.clientId: "+Page.clientId);
 		if (clientIdFromDB==Page.clientId) return true;
 		else return false;
 	}
@@ -117,7 +117,6 @@ public class LogicLayer {
 		//Loading data from the database
 		//Retrieving the profile from the database
 		UserProfileDAO profileDao = new UserProfileDAO();	
-		//TODO retrieve id from username/password data
 		profileDao.getProfile(clientId);		
 		//Retrieving the account information 
 		AccountDAO dao = new AccountDAO();
@@ -143,7 +142,7 @@ public class LogicLayer {
 				//a valid/invalid user name or a valid/invalid password has been entered
 				if(isUserNameValid(userData)) 
 				{//return Login Page with content message asking for password
-					System.out.println("User name is valid");
+					//System.out.println("User name is valid");
 					//Storing user name in DB
 //					UserProfileDAO dao = new UserProfileDAO();
 //					dao.setUserName(userData);
@@ -153,7 +152,7 @@ public class LogicLayer {
 				}
 				else
 				{//return Login Page with error message
-					System.out.println("User name is not valid: "+userData);
+					//System.out.println("User name is not valid: "+userData);
 					pageDisplayed.getContent().getUnknowEntryMessage().setUserData(userData);
 					return pageDisplayed;
 				}
@@ -162,6 +161,11 @@ public class LogicLayer {
 			{	//checking the combination username/password
 				if(isPasswordValid(userData))
 				{
+					UserProfileDAO dao = new UserProfileDAO();
+					//System.out.println("Retrieving profile from id:"+Page.clientId);
+					dao.getProfile(Page.clientId);
+					AccountDAO daoAcc = new AccountDAO();
+					daoAcc.retrieveAccountLists(Page.clientId);
 					//Return Accounts home page					
 					return AccountsHomePage.returnSingleton();
 				}
